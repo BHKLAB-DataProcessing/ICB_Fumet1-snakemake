@@ -10,12 +10,13 @@ input_dir <- args[1]
 output_dir <- args[2]
 
 gunzip(file.path(input_dir, "GSE190266_series_matrix.txt.gz"))
-clin <- getGEO(filename=file.path(input_dir, 'GSE190266_series_matrix.txt'), destdir=input_dir)
+clin <- getGEO(filename = file.path(input_dir, "GSE190266_series_matrix.txt"), destdir = input_dir)
 clin <- pData(clin)
-colnames(clin)[colnames(clin) == 'title'] <- 'patientid'
+colnames(clin)[colnames(clin) == "title"] <- "patientid"
+clin$patientid <- str_replace_all(clin$patientid, "\\W", '_')
 rownames(clin) <- clin$patientid
 
 # TODO: Format the clinical data with common columns etc.
 
 
-write.table(clin, file=file.path(output_dir, 'ICB_Fumet1_metadata.tsv'), sep='\t')
+write.table(clin, file = file.path(output_dir, "ICB_Fumet1_metadata.tsv"), row.names = TRUE, col.names = TRUE, sep = "\t")
