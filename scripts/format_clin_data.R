@@ -20,10 +20,11 @@ clin$patientid <- str_replace_all(clin$patientid, "\\W", '_')
 rownames(clin) <- clin$patientid
 
 # TODO: Format the clinical data with common columns etc.
-selected_cols <- c('patientid', 'tissue:ch1', 'disease state:ch1', 'pfs_time (6 months):ch1', 'pfs_evt (6 months):ch1')
+selected_cols <- c('patientid', 'tissue:ch1', 'pfs_time (6 months):ch1', 'pfs_evt (6 months):ch1')
 remaining_cols <- colnames(clin)[!colnames(clin) %in% selected_cols]
 clin <- clin[, c(selected_cols, remaining_cols)]
-colnames(clin)[colnames(clin) %in% selected_cols] <- c('patientid', 'tissueid', 'histo', 't.pfs', 'pfs')
+colnames(clin)[colnames(clin) %in% selected_cols] <- c('patientid', 'tissueid', 't.pfs', 'pfs')
+clin$tissueid <- 'Lung'
 clin <- add_column(clin, response=NA, response.other.info=NA, recist=NA, .after='tissueid')
 clin$t.pfs <- as.numeric(clin$t.pfs)
 clin$pfs <- as.numeric(clin$pfs)
@@ -34,7 +35,8 @@ clin <- add_column(
   sex=NA,
   age=NA,
   stage=NA,
-  treatmentid=NA,
+  histo=NA,
+  treatmentid='anti-PD-1',
   drug_type=NA,
   dna=NA,
   rna=NA,
