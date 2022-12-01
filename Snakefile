@@ -12,12 +12,12 @@ filename = config["filename"]
 rule get_multiassay:
     input:
         S3.remote(prefix + "scripts/get_multiassay.R"),
-        prefix + "processed/EXPR_gene_tpm.rds",
-        prefix + "processed/EXPR_gene_counts.rds",
-        prefix + "processed/EXPR_isoform_tpm.rds",
-        prefix + "processed/EXPR_isoform_counts.rds"
+        S3.remote(prefix + "processed/EXPR_gene_tpm.rds"),
+        S3.remote(prefix + "processed/EXPR_gene_counts.rds"),
+        S3.remote(prefix + "processed/EXPR_isoform_tpm.rds"),
+        S3.remote(prefix + "processed/EXPR_isoform_counts.rds")
     output:
-        prefix + filename
+        S3.remote(prefix + filename)
     resources:
         mem_mb = 3000,
         disk_mb = 3000
@@ -34,22 +34,22 @@ rule get_exp_se:
     input:
         S3.remote(prefix + "annotation/Gencode.v40.annotation.RData"),
         S3.remote(prefix + "scripts/get_exp_se.R"),
-        prefix + "processed/EXPR_gene_tpm.csv",
-        prefix + "processed/EXPR_gene_counts.csv",
-        prefix + "processed/EXPR_isoform_tpm.csv",
-        prefix + "processed/EXPR_isoform_counts.csv",
-        prefix + "processed/CLIN.rds",
-        prefix + "processed/cased_sequenced.rds"
+        S3.remote(prefix + "processed/EXPR_gene_tpm.csv"),
+        S3.remote(prefix + "processed/EXPR_gene_counts.csv"),
+        S3.remote(prefix + "processed/EXPR_isoform_tpm.csv"),
+        S3.remote(prefix + "processed/EXPR_isoform_counts.csv"),
+        S3.remote(prefix + "processed/CLIN.rds"),
+        S3.remote(prefix + "processed/cased_sequenced.rds")
     output:
-        prefix + "processed/EXPR_gene_tpm.rds",
-        prefix + "processed/EXPR_gene_counts.rds",
-        prefix + "processed/EXPR_isoform_tpm.rds",
-        prefix + "processed/EXPR_isoform_counts.rds"
+        S3.remote(prefix + "processed/EXPR_gene_tpm.rds"),
+        S3.remote(prefix + "processed/EXPR_gene_counts.rds"),
+        S3.remote(prefix + "processed/EXPR_isoform_tpm.rds"),
+        S3.remote(prefix + "processed/EXPR_isoform_counts.rds")
     shell:
         """
         Rscript {prefix}scripts/get_exp_se.R \
         {prefix}processed \
-        Fumet1 \
+        Limagne1 \
         FALSE \
         FALSE \
         TRUE \
@@ -59,11 +59,11 @@ rule get_exp_se:
 rule format_clin_cased_sequenced:
     input:
         S3.remote(prefix + "scripts/format_clin_cased_sequenced.R"),
-        prefix + "processed/CLIN.csv",
-        prefix + "processed/cased_sequenced.csv"
+        S3.remote(prefix + "processed/CLIN.csv"),
+        S3.remote(prefix + "processed/cased_sequenced.csv")
     output:
-        prefix + "processed/cased_sequenced.rds",
-        prefix + "processed/CLIN.rds"
+        S3.remote(prefix + "processed/cased_sequenced.rds"),
+        S3.remote(prefix + "processed/CLIN.rds")
     shell:
         """
         Rscript {prefix}scripts/format_clin_cased_sequenced.R \
@@ -86,10 +86,10 @@ rule format_expr_data:
     input:
         S3.remote(prefix + "download/expr_list.rds")
     output:
-        prefix + "processed/EXPR_gene_tpm.csv",
-        prefix + "processed/EXPR_gene_counts.csv",
-        prefix + "processed/EXPR_isoform_tpm.csv",
-        prefix + "processed/EXPR_isoform_counts.csv"
+        S3.remote(prefix + "processed/EXPR_gene_tpm.csv"),
+        S3.remote(prefix + "processed/EXPR_gene_counts.csv"),
+        S3.remote(prefix + "processed/EXPR_isoform_tpm.csv"),
+        S3.remote(prefix + "processed/EXPR_isoform_counts.csv")
     shell:
         """
         Rscript scripts/format_expr_data.R \
@@ -103,14 +103,13 @@ rule format_clin_data:
         S3.remote(prefix + "annotation/curation_drug.csv"),
         S3.remote(prefix + "download/GSE190266_series_matrix.txt.gz")
     output:
-        prefix + "processed/CLIN.csv",
-        prefix + "processed/cased_sequenced.csv"
+        S3.remote(prefix + "processed/CLIN.csv"),
+        S3.remote(prefix + "processed/cased_sequenced.csv")
     shell:
         """
         Rscript scripts/format_clin_data.R \
         {prefix}download \
-        {prefix}processed \
-        {prefix}annotation \
+        {prefix}processed 
         """
 
 rule compile_expr_data:
