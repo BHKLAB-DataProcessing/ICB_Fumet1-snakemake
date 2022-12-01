@@ -1,1 +1,1 @@
-# ICB_Fumet1-snakemake
+# ICB_Limagne1-snakemake
